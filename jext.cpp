@@ -49,6 +49,10 @@ int main(int argc, char** argv){
     // footer
     dest << ")"     << std::endl
          << "main ";
+    
+    if(argc < 4){
+       dest << "<"; 
+    }
     // write the arguments for invoking main
     for(int i = 2; i < argc; i++){
         std::string arg = argv[i];
@@ -65,7 +69,7 @@ int main(int argc, char** argv){
     }
     // no arguments passed to the function; provide empty arg set
     if(argc < 3){
-       dest << "<''"; 
+        dest << "''";
     }
     dest << std::endl;
     dest << "final ''" << std::endl;

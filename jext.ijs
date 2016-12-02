@@ -147,9 +147,11 @@ unbox =: >@
 
 NB. N padstr fill ; str
 NB. fills the right of str with `fill` until of length `N`
-padstr =: [ $ >@last@] , [ # >@first@]
+pad =: [ $ >@last@] , [ # >@first@]
+lpad =: -@[ {. >@last@] ,~ [ # >@first@]
+snumpad =: [ lpad '0'&;
 
-read =: [: 1!:1 <
+read =: [: 1!:1 <@(>^:_)
 
 err =: [: 0 0&$@(1!:2&5) ,&LF
 out =: 0 0&$@(1!:2&4)
@@ -161,7 +163,7 @@ printable =: (127 >: ord) *. 32 <: ord
 NB. hex_bytes =: ] ([: > [: (' ' joinstring _4 <\ ,@hfd@ord)&.> ]) (_16 <\ ])
 NB. print_of =: [: (printable { '.'&,)"0 [:>_16 <\ ]
 NB. ish
-NB. xxd =: print_of ,.~ [: (41 padstr ' '&;)@> [: ;/ hex_bytes
+NB. xxd =: print_of ,.~ [: (41 pad ' '&;)@> [: ;/ hex_bytes
 
 ord =: 3&u:
 comp =: (] ; 32 u:@+ 95 ab #.~) 1x + max
