@@ -1,7 +1,7 @@
 SP =: ' '
-table =: [: ([:<;._1 SP&,);._1 LF&,
+tabulate =: [: ([:<;._1 SP&,);._1 LF&,
 
-([:(}:([:".[,' =: ',])&.>{:)]#~(<i.0)&~:)"1 table ]s =: }: 0 : 0
+([:(}:([:".[,' =: ',])&.>{:)]#~(<i.0)&~:)"1 tabulate ]s =: }: 0 : 0
 equal self_classify =
 less_than less lt box <
 larger_than more gt open >
