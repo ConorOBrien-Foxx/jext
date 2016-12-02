@@ -1,7 +1,7 @@
 SP =: ' '
 tabulate =: [: ([:<;._1 SP&,);._1 LF&,
 
-([:(}:([:".[,' =: ',])&.>{:)]#~(<i.0)&~:)"1 tabulate ]s =: }: 0 : 0
+([:(}:([:".[,' =: ',])&.>{:)]#~(<i.0)&~:)"1 tabulate ]s =: }: noun define
 equal self_classify =
 less_than less lt box <
 larger_than more gt open >
@@ -127,15 +127,15 @@ nine 9:
 min =: <./
 max =: >./
 f =: -.@(t =: 0&~:)
-adv_of =: 1 : '1 :(''[: ('',u,'') u'')'
+adv_of =: adverb def '1 :(''[: ('',u,'') u'')'
 T =: 't' adv_of
 F =: 'f' adv_of
 any =: max T
 all =: min T
 none =: max F
-ANY =: 1 : '[: >./ u'
-ALL =: 1 : '[: <./ u'
-TRUTHY =: 3 : 0
+ANY =: adverb def '[: >./ u'
+ALL =: adverb def  '[: <./ u'
+TRUTHY =: monad define
   if. y do. 1
   else.     0
   end.
@@ -144,6 +144,24 @@ truthy =: t @ {.
 
 ab =: #.inv
 unbox =: >@
+
+NB. N padstr fill ; str
+NB. fills the right of str with `fill` until of length `N`
+padstr =: [ $ >@last@] , [ # >@first@]
+
+read =: [: 1!:1 <
+
+err =: [: 0 0&$@(1!:2&5) ,&LF
+out =: 0 0&$@(1!:2&4)
+
+MONAD =: adverb def 'u : ([: err ''no dyadic case''"_)'
+DYAD =: adverb def '([: err ''no monadic case''"_) : u'
+
+printable =: (127 >: ord) *. 32 <: ord
+NB. hex_bytes =: ] ([: > [: (' ' joinstring _4 <\ ,@hfd@ord)&.> ]) (_16 <\ ])
+NB. print_of =: [: (printable { '.'&,)"0 [:>_16 <\ ]
+NB. ish
+NB. xxd =: print_of ,.~ [: (41 padstr ' '&;)@> [: ;/ hex_bytes
 
 ord =: 3&u:
 comp =: (] ; 32 u:@+ 95 ab #.~) 1x + max

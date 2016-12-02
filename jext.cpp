@@ -32,14 +32,14 @@ int main(int argc, char** argv){
     }
     // header
     dest << "load 'jext.ijs'"                      << std::endl
-         << "final =: monad : 'exit 0'"            << std::endl
+         << "final =: monad def 'exit 0'"          << std::endl
          << "main =: monad define"                 << std::endl
          << "  argv =: y"                          << std::endl
          << "  try. arge =: >@(\".&.>) argv"       << std::endl
          << "  catch. arge =: i.0 0"               << std::endl
          << "  end."                               << std::endl
          << "  open_arg =: \".@>"                  << std::endl
-         << "  arg =: monad : 'open_arg y { argv'" << std::endl;
+         << "  arg =: monad def 'open_arg y { argv'" << std::endl;
     // put source code into file
     std::string line;
     while(getline(source, line)){
