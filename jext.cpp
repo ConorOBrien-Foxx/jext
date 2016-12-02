@@ -63,10 +63,16 @@ int main(int argc, char** argv){
             dest << " ; ";
         }
     }
+    // no arguments passed to the function; provide empty arg set
+    if(argc < 3){
+       dest << "<''"; 
+    }
     dest << std::endl;
     dest << "final ''" << std::endl;
     dest.close();
     // execute file
     system(_dest_name);
+    // todo: add flag syntax for disabling file deletion
+    // std::remove(_dest_name);
     return 0;
 }
