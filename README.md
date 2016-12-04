@@ -58,3 +58,7 @@ final ''
 ```
 
 Note that the arguments are compiled into the program, as passed to main in `main <''`.
+
+## More information?
+
+Take a look at `DOCS.md`. I have some specific thingies there.

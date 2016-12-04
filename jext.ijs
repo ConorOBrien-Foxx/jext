@@ -124,17 +124,27 @@ eight 8:
 nine 9:
 )
 
+MONAD =: adverb def 'u : ([: err ''no dyadic case''"_)'
+DYAD =: adverb def '([: err ''no monadic case''"_) : u'
+
 min =: <./
 max =: >./
-f =: -.@(t =: 0&~:)
-adv_of =: adverb def '1 :(''[: ('',u,'') u'')'
-T =: 't' adv_of
-F =: 'f' adv_of
+t =: 0 bond neq
+f =: not atop t
+repr =: 5!:
+atomic =: 1 [ boxed =: 2 [ tree =: 4 [ linear =: 5 [ paren =: 6 [ explicit =: 7
+monadic =: 1 [ dyadic =: 2
+adv_of =: adverb define
+  up =. linear repr <'u'
+  adverb def ('[: ' , up , ' u')
+)
+T =: t adv_of
+F =: f adv_of
 any =: max T
 all =: min T
 none =: max F
-ANY =: adverb def '[: >./ u'
-ALL =: adverb def  '[: <./ u'
+ANY =: any adv_of
+ALL =: all adv_of
 TRUTHY =: monad define
   if. y do. 1
   else.     0
@@ -145,7 +155,7 @@ truthy =: t @ {.
 ab =: #.inv
 unbox =: >@
 
-NB. N padstr fill ; str
+NB. N pad fill ; str
 NB. fills the right of str with `fill` until of length `N`
 pad =: [ $ >@last@] , [ # >@first@]
 lpad =: -@[ {. >@last@] ,~ [ # >@first@]
@@ -161,14 +171,11 @@ reload =: monad define
 err =: [: 0 0&$@(1!:2&5) ,&LF
 out =: 0 0&$@(1!:2&4)
 
-MONAD =: adverb def 'u : ([: err ''no dyadic case''"_)'
-DYAD =: adverb def '([: err ''no monadic case''"_) : u'
-
 printable =: (127 >: ord) *. 32 <: ord
 
 ord =: 3&u:
-comp =: (] ; 32 u:@+ 95 ab #.~) 1x + max
-decomp =: first unbox ab 95 #. 32x -~ 3 u: last unbox
+comp =: ((] ; 32 u:@+ 95 ab #.~) 1x + max) :. (first unbox ab 95 #. 32x -~ 3 u: last unbox)
+decomp =: comp inv
 DECOMP =: [ ab 95 #. 32x -~ 3 u: ]
 rle =: monad define
   text =. y
@@ -200,5 +207,9 @@ apply =: conjunction define
   end.
   r
 )
+
+keep =: [ #~ e.
+upalpha =: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+downalpha =: tolower upalpha
 
 NB. end jext.ijs

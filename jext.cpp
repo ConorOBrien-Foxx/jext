@@ -8,6 +8,13 @@
 #define error(msg) std::cerr << msg << std::endl;\
                    error_exit;
 
+// modified from http://stackoverflow.com/a/524843/4119004
+string readFile(const string &fileName){
+    std::ifstream f(fileName.c_str());
+    return string(std::istreambuf_iterator<char>(f),
+            std::istreambuf_iterator<char>());
+}
+
 int main(int argc, char** argv){
     if(argc < 2){
         std::cout << "Compiles a jext program"
@@ -30,7 +37,6 @@ int main(int argc, char** argv){
     bool optionInclExtern = false;
     // process flags
     bool skip[argc] = { false };    // for compiling arguments
-    int fileLoc = 1;                // the location of the file to be read
     for(int i = 1; i < argc; i++){
         string arg = "";
         char* str = argv[i];
@@ -55,7 +61,14 @@ int main(int argc, char** argv){
         } else {
             error("invalid flag `" << arg << "`");
         }
-        fileLoc = i + 1;
+    }
+    int fileLoc = 1;        // the location of the file to be read
+    // find the first non-skipped argument, then set the file location to it
+    for(int i = 1; i < argc; i++){
+        if(skip[i]) continue;
+        fileLoc = i;
+        skip[i] = true;  // for future skipping
+        break;
     }
     if(fileLoc >= argc){
         error("no file was passed");
@@ -93,23 +106,12 @@ int main(int argc, char** argv){
     
     // header
     if(optionInclExtern){
-        std::ifstream jext;
-        jext.open("jext.ijs");
-        string line;
-        while(getline(jext, line)){
-            dest << line << std::endl;
-        }
+        dest << readFile("jext.ijs");
     } else {
         dest << "load 'jext.ijs'" << std::endl;
     }
-    dest << "final =: monad def 'exit 0'"          << std::endl
-         << "main =: monad define"                 << std::endl
-         << "  argv =: y"                          << std::endl
-         << "  try. arge =: >@(\".&.>) argv"       << std::endl
-         << "  catch. arge =: i.0 0"               << std::endl
-         << "  end."                               << std::endl
-         << "  open_arg =: \".@>"                  << std::endl
-         << "  arg =: monad def 'open_arg y { argv'" << std::endl;
+    dest << readFile("header.ijs");
+    dest << std::endl;
     // put source code into file
     string line;
     while(getline(source, line)){
@@ -119,12 +121,16 @@ int main(int argc, char** argv){
     // footer
     dest << ")"     << std::endl
          << "main ";
-    
-    if(argc < 4){
+    // count number of non-skipped arguments
+    int argsLeft = 0;
+    for(int i = 1; i < argc; i++)
+        if(!skip[i]) argsLeft++;
+    // only one argument; box it to be sure
+    if(argsLeft == 1){
        dest << "<"; 
     }
     // write the arguments for invoking main
-    for(int i = 2; i < argc; i++){
+    for(int i = 1; i < argc; i++){
         if(skip[i]) continue;
         string arg = argv[i];
         dest << "'";
@@ -139,7 +145,7 @@ int main(int argc, char** argv){
         }
     }
     // no arguments passed to the function; provide empty arg set
-    if(argc < 3){
+    if(argsLeft == 0){
         dest << "''";
     }
     dest << std::endl;
