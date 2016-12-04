@@ -1,7 +1,7 @@
 SP =: ' '
 tabulate =: [: ([:<;._1 SP&,);._1 LF&,
 
-([:(}:([:".[,' =: ',])&.>{:)]#~(<i.0)&~:)"1 tabulate ]s =: }: noun define
+([:(}:([:".[,' =: ',])&.>{:)]#~(<i.0)&~:)"1 tabulate ]raw_names =: }: noun define
 equal self_classify =
 less_than less lt box <
 larger_than more gt open >
@@ -151,7 +151,12 @@ pad =: [ $ >@last@] , [ # >@first@]
 lpad =: -@[ {. >@last@] ,~ [ # >@first@]
 snumpad =: [ lpad '0'&;
 
-read =: [: 1!:1 <@(>^:_)
+enbox =: <@(>^:_)
+exec =: 0!:0@enbox
+reload =: monad define
+  if. 0=#y do. y =. 'jext.ijs' end.
+  exec y
+)
 
 err =: [: 0 0&$@(1!:2&5) ,&LF
 out =: 0 0&$@(1!:2&4)
@@ -160,16 +165,12 @@ MONAD =: adverb def 'u : ([: err ''no dyadic case''"_)'
 DYAD =: adverb def '([: err ''no monadic case''"_) : u'
 
 printable =: (127 >: ord) *. 32 <: ord
-NB. hex_bytes =: ] ([: > [: (' ' joinstring _4 <\ ,@hfd@ord)&.> ]) (_16 <\ ])
-NB. print_of =: [: (printable { '.'&,)"0 [:>_16 <\ ]
-NB. ish
-NB. xxd =: print_of ,.~ [: (41 pad ' '&;)@> [: ;/ hex_bytes
 
 ord =: 3&u:
 comp =: (] ; 32 u:@+ 95 ab #.~) 1x + max
 decomp =: first unbox ab 95 #. 32x -~ 3 u: last unbox
 DECOMP =: [ ab 95 #. 32x -~ 3 u: ]
-rle =: 3 : 0
+rle =: monad define
   text =. y
   i =. 0
   res =. 0 ; 0
@@ -188,7 +189,7 @@ rle =: 3 : 0
 NB. only is bijective for non-digits
 RLE =: [: ; ":&.>@|."1@rle
 
-apply =: 2 : 0
+apply =: conjunction define
   i =. 0
   r =. ''
   for_j. y do.
@@ -200,9 +201,4 @@ apply =: 2 : 0
   r
 )
 
-NB. like ruby's. TODO
-NB. tr =: 4 : 0
-NB.   idk
-NB. )
-
-
+NB. end jext.ijs
