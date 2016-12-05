@@ -171,7 +171,7 @@ reload =: monad define
 err =: [: 0 0&$@(1!:2&5) ,&LF
 out =: 0 0&$@(1!:2&4)
 
-printable =: (127 >: ord) *. 32 <: ord
+printable =: (126 >: ord) *. 32 <: ord
 
 ord =: 3&u:
 comp =: ((] ; 32 u:@+ 95 ab #.~) 1x + max) :. (first unbox ab 95 #. 32x -~ 3 u: last unbox)
@@ -208,8 +208,16 @@ apply =: conjunction define
   r
 )
 
+invariant =: adverb def '(= u)'
+accept =: adverb def '(#~ u T)'
+reject =: adverb def '(#~ u F)'
 keep =: [ #~ e.
+isupper =: toupper invariant
+islower =: tolower invariant
 upalpha =: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 downalpha =: tolower upalpha
+ISUPPER =: e.&upalpha
+ISLOWER =: e.&upalpha
+ascii =: (#~ printable) alpha
 
 NB. end jext.ijs

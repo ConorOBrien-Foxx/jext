@@ -49,9 +49,17 @@ These are commands which are usually defined explicitly and have special effects
 | `rle`       | Verb        | Given `y`, a string, run-length encodes `y` into a table, that is, yields a table of values whose left column represent the characters, and the right column their run frequency. |
 | `RLE`       | Verb        | `rle`, but yields a string. |
 | `apply`     | Conjunction | Applies `v` to the `u` indices of a flat list `y`. |
+| `invariant` | Adverb      | Given `u`, yields `(= u)`. |
 | `keep`      | Verb        | Remove from `x` that which isn't in `y`. |
 | `upalpha`   | Noun        | `upalpha` &leftrightarrow; `'ABCDEFGHIJKLMNOPQRSTUVWXYZ'` |
 | `downalpha` | Noun        | `downalpha` &leftrightarrow; `'abcdefghijklmnopqrstuvwxyz'` |
+| `accept`    | Adverb      | Given `u`, yields members of `y` that are truthy. |
+| `reject`    | Adverb      | `accept`, but falsey. Roughly, `u reject y` &leftrightarrow; `(-. u accept) y`. |
+| `ascii`     | Noun        | `ascii` &leftrightarrow; `printable accept alpha`. |
+| `islower`   | Verb        | `islower` &leftrightarrow; `tolower invariant`. |
+| `isupper`   | Verb        | `isupper` &leftrightarrow; `toupper invariant`. |
+| `ISUPPER`   | Verb        | Reports whether or not the argument is in `upalpha`. |
+| `ISLOWER`   | Verb        | Reports whether or not the argument is in `downalpha`. |
 
 ## Examples
 
