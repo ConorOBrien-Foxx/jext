@@ -1,3 +1,5 @@
+NB. enter the special locale for defining things
+18 !: 4 <'z'
 SP =: ' '
 tabulate =: [: ([:<;._1 SP&,);._1 LF&,
 
@@ -219,5 +221,39 @@ downalpha =: tolower upalpha
 ISUPPER =: e.&upalpha
 ISLOWER =: e.&upalpha
 ascii =: (#~ printable) alpha
+then =: conjunction def '[: u v'
+sum =: +/
+freq =: ~. ;"0 [: sum ] ="0 1 ~.
+coset =: 18!:4@enbox
+box_draw =: 9!:7
 
+NB. test class
+coclass 'Stack'
+create =: monad def 'items =: '''''
+push =: monad def '# items =: items , < y'
+top =: monad def '> last items'
+pop =: monad def '(items =: betail items) ] pop 0'
+inspect =: monad def 'items'
+destory = codestroy
+
+coset 'z'
+
+NB. from http://code.jsoftware.com/wiki/Essays/Huffman_Coding
+NB. frequencies hc letters
+hc =: dyad define
+  if. 1=#x do. y
+  else. ((i{x),+/j{x) hc (i{y),<j{y [ i=. (i.#x) -. j=. 2{./:x end.
+)
+
+hcodes =: dyad define
+  assert. x -:&$ y            NB. weights and words have same shape
+  assert. (0<:x) *. 1=#$x     NB. weights are non-negative
+  assert. 1 >: L.y            NB. words are boxed not more than once
+  w =. ,&.> y                 NB. standardized words
+  assert. w -: ~.w            NB. words are unique
+  t =. 0 {:: x hc w           NB. minimal weight binary tree
+  ((< S: 0 t) i. w) { <@(1&=)@; S: 1 {:: t
+)
+
+coset 'base'
 NB. end jext.ijs
