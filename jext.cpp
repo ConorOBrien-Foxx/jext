@@ -8,12 +8,9 @@
 #define error(msg) std::cerr << msg << std::endl;\
                    error_exit;
 
-// modified from http://stackoverflow.com/a/524843/4119004
-string readFile(const string &fileName){
-    std::ifstream f(fileName.c_str());
-    return string(std::istreambuf_iterator<char>(f),
-            std::istreambuf_iterator<char>());
-}
+string readfile(const string);
+bool hasSuffix(string, string);
+bool hasPrefix(string, string);
 
 int main(int argc, char** argv){
     if(argc < 2){
@@ -157,4 +154,31 @@ int main(int argc, char** argv){
         std::remove(_destName);
     }
     return 0;
+}
+
+// modified from http://stackoverflow.com/a/524843/4119004
+string readFile(const string &fileName){
+    std::ifstream f(fileName.c_str());
+    return string(std::istreambuf_iterator<char>(f),
+            std::istreambuf_iterator<char>());
+}
+
+bool hasSuffix(string main, string suffix){
+    int mainLen = main.length();
+    int suffLen = suffix.length();
+    for(int i = 0; i < suffLen; i++){
+        if(suffix[suffLen - i - 1] != main[mainLen - i - 1])
+            return false;
+    }
+    return true;
+}
+
+bool hasPrefix(string main, string prefix){
+    int mainLen = main.length();
+    int prefLen = prefix.length();
+    for(int i = 0; i < prefLen; i++){
+        if(prefix[i] != main[i])
+            return false;
+    }
+    return true;
 }
