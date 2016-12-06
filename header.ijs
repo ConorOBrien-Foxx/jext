@@ -6,8 +6,11 @@ repl =: monad define
 )
 main =: monad define
   argv =: y
-  try. arge =: >@(".&.>) argv
+  try.   arge =: >@(".&.>) argv
   catch. arge =: i.0 0
   end.
-  open_arg =: ".@>
-  arg =: monad def 'open_arg y { argv'
+  arg =: monad define
+    try.   > y { argv
+    catch. 
+    end.
+  )
