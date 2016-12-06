@@ -9,8 +9,4 @@ main =: monad define
   try.   arge =: >@(".&.>) argv
   catch. arge =: i.0 0
   end.
-  arg =: monad define
-    try.   > y { argv
-    catch. 
-    end.
-  )
+  arg =: monad def ('try.   > y { argv' ; 'catch.' ; 'end.')

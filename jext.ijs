@@ -225,7 +225,10 @@ then =: conjunction def '[: u v'
 sum =: +/
 freq =: ~. ;"0 [: sum ] ="0 1 ~.
 coset =: 18!:4@enbox
-box_draw =: 9!:7
+box_draw_opt =: 9!:7
+stn =: 95x #. 32 -~ ord
+succ =: inc&.stn : ([: stn inv [ + stn@])
+prev =: dec&.stn : ([: stn inv [ - stn@])
 
 NB. test class
 coclass 'Stack'
