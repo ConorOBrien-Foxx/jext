@@ -168,11 +168,14 @@ string readFile(const string &fileName){
             std::istreambuf_iterator<char>());
 }
 
+// todo: ignore stuff inside comments, maybe? probably not
 bool hasSuffix(string main, string suffix){
     int mainLen = main.length();
     int suffLen = suffix.length();
-    for(int i = 0; i < suffLen; i++){
-        if(suffix[suffLen - i - 1] != main[mainLen - i - 1])
+    int j = 0;
+    while(main[mainLen - j - 1] == ' ') j++;
+    for(int i = 0; i < suffLen; i++, j++){
+        if(suffix[suffLen - i - 1] != main[mainLen - j - 1])
             return false;
     }
     return true;
