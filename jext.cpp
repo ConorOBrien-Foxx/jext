@@ -112,7 +112,12 @@ int main(int argc, char** argv){
     // put source code into file
     string line;
     while(getline(source, line)){
-        dest << "  " << line << std::endl;
+        if(!hasSuffix(line, "...")){
+            dest << "  " << line << std::endl;
+        } else {
+            int lastIndex = line.rfind("...");
+            dest << line.substr(0, lastIndex);
+        }
     }
     source.close();
     // footer
