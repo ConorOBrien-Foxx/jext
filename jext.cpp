@@ -8,7 +8,7 @@
 #define error(msg) std::cerr << msg << std::endl;\
                    error_exit;
 
-string readfile(const string);
+string readFile(const string &fileName);
 bool hasSuffix(string, string);
 bool hasPrefix(string, string);
 
