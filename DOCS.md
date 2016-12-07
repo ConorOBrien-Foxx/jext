@@ -2,6 +2,12 @@
 
 Always more to come.
 
+## Defined controls
+
+* `monad.` - begins a monadic definition). Once fully implemented, can be nested arbitrarily.
+* `dyad.` - begins a dyadic definition (unimplemented).
+* `stop.` - ends a monadic or dyadic definition.
+
 ## Defined keywords
 
 These are commands which are usually defined explicitly and have special effects; they differ from functions in that functions can be described in terms of their tacit definitions, e.g. `max` is `>./`.

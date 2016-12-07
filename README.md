@@ -2,7 +2,7 @@
 
 compile `jext` as:
 
-    g++ jext.cpp -o jext
+    g++ -std=c++11 jext.cpp -o jext
 
 Then, run as:
 

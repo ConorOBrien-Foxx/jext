@@ -1,37 +1,48 @@
 #include <iostream>
 #include <fstream>
 #include <string.h>
+#include <regex>
 #include <stdlib.h>
 #define exit return 0
 #define error_exit return 1
-#define string std::string
-#define error(msg) std::cerr << msg << std::endl;\
+#define error(msg) std::cerr << msg << std::endl; \
                    error_exit;
+using std::string;
+using std::size_t;
+using std::endl;
+using std::cout;
+using std::regex;
+using std::regex_replace;
 
 string readFile(const string &fileName);
+string quoteString(string);
+size_t countOccurances(string, string);
 bool hasSuffix(string, string);
 bool hasPrefix(string, string);
 
 int main(int argc, char** argv){
     if(argc < 2){
-        std::cout << "Compiles a jext program"
-                  << std::endl << std::endl
+        cout << "Compiles a jext program"
+                  << endl << endl
                   << argv[0] << " [flags] filename [arguments]"
-                  << std::endl << std::endl
+                  << endl << endl
                   << "  filename    the file to compile; must end in .jext"
-                  << std::endl << std::endl
-                  << "  -a           includes jext.ijs in the compiled source" << std::endl
-                  << "  -c           removes compiled program after execution" << std::endl
-                  << "  -cleanUp     same as -c"                               << std::endl
-                  << "  -i           ignores extension type"                   << std::endl
-                  << "  -ignoreExt   same as -i"                               << std::endl
-                  << "  -inclExtern  same as -a"                               << std::endl;
+                  << endl << endl
+                  << "  -a           includes jext.ijs in the compiled source" << endl
+                  << "  -c           removes compiled program after execution" << endl
+                  << "  -cleanUp     same as -c"                               << endl
+                  << "  -i           ignores extension type"                   << endl
+                  << "  -ignoreExt   same as -i"                               << endl
+                  << "  -inclExtern  same as -a"                               << endl
+                  << "  -o           outputs compiled source but does not run" << endl
+                  << "  -outSource   same as -o"                               << endl;
         error_exit;
     }
     // define options
     bool optionCleanUp    = false;
     bool optionIgnoreExt  = false;
     bool optionInclExtern = false;
+    bool optionOutSource  = false;
     // process flags
     bool skip[argc] = { false };    // for compiling arguments
     for(int i = 1; i < argc; i++){
@@ -54,6 +65,9 @@ int main(int argc, char** argv){
             skip[i] = true;
         } else if(arg == "a" || arg == "inclExtern"){
             optionInclExtern = true;
+            skip[i] = true;
+        } else if(arg == "o" || arg == "outSource"){
+            optionOutSource = true;
             skip[i] = true;
         } else {
             error("invalid flag `" << arg << "`");
@@ -105,23 +119,64 @@ int main(int argc, char** argv){
     if(optionInclExtern){
         dest << readFile("jext.ijs");
     } else {
-        dest << "load 'jext.ijs'" << std::endl;
+        dest << "load 'jext.ijs'" << endl;
     }
     dest << readFile("header.ijs");
-    dest << std::endl;
+    dest << endl;
+    
     // put source code into file
     string line;
+    int lineNum = 0;
     while(getline(source, line)){
-        if(!hasSuffix(line, "...")){
-            dest << "  " << line << std::endl;
+        lineNum++;
+        // todo: ignore `monad.`s in strings; depth
+        int monadCount = countOccurances(line, "monad.");
+        if(monadCount == 0){
+            continue;
+        } else if(monadCount == 1){
+            // read lines until stop.
+            bool fileEmpty = false;
+            string result = "";
+            string add;
+            while(true){
+                fileEmpty = !getline(source, add);
+                lineNum++;
+                int stopCount = countOccurances(add, "stop.");
+                if(stopCount == 1){
+                    if(result.length() > 3)
+                        result.erase(result.length() - 3);
+                    else
+                        result += "''";
+                    result += ")" + regex_replace(add, (regex) "stop\\.", "\n");
+                    break;
+                } else if(stopCount > 1){
+                    std::cerr << "compilte time error: too many `stop.`s on line " << lineNum << endl;
+                } else {
+                    result += quoteString(add) + " ; ";
+                }
+                if(fileEmpty){
+                    std::cerr << "compile time error: EOF found, expected `stop.`.";
+                    error_exit;
+                }
+            }
+            dest << "  " << regex_replace(line, (regex)"monad\\.", "monad def (");
+            dest << result << endl;
+            continue;
         } else {
+            std::cerr << "compilte time error: too many `monad.`s on line " << lineNum << endl;
+            error_exit;
+        }
+        if(hasSuffix(line, "...")){
             int lastIndex = line.rfind("...");
             dest << line.substr(0, lastIndex);
+        } else {
+            dest << "  " << line << endl;
         }
     }
     source.close();
+    
     // footer
-    dest << ")"     << std::endl
+    dest << ")"     << endl
          << "main ";
     // count number of non-skipped arguments
     int argsLeft = 0;
@@ -135,13 +190,14 @@ int main(int argc, char** argv){
     for(int i = 1; i < argc; i++){
         if(skip[i]) continue;
         string arg = argv[i];
-        dest << "'";
-        // output chars one at a time
-        for(int j = 0; j < arg.length(); j++){
-            dest << arg[j];
-            if(arg[j] == '\'') dest << "'";
-        }
-        dest << "'";
+        dest << quoteString(arg);
+        // dest << "'";
+        // // output chars one at a time
+        // for(int j = 0; j < arg.length(); j++){
+            // dest << arg[j];
+            // if(arg[j] == '\'') dest << "'";
+        // }
+        // dest << "'";
         if(i < argc - 1){
             dest << " ; ";
         }
@@ -150,9 +206,13 @@ int main(int argc, char** argv){
     if(argsLeft == 0){
         dest << "''";
     }
-    dest << std::endl;
-    dest << "final ''" << std::endl;
+    dest << endl;
+    dest << "final ''" << endl;
     dest.close();
+    if(optionOutSource){
+        cout << readFile(_destName);
+        exit;
+    }
     // execute file; windows only
     system(_destName);
     if(optionCleanUp){
@@ -166,6 +226,28 @@ string readFile(const string &fileName){
     std::ifstream f(fileName.c_str());
     return string(std::istreambuf_iterator<char>(f),
             std::istreambuf_iterator<char>());
+}
+
+string quoteString(string toquote){
+    string result = "'";
+    for(int i = 0; i < toquote.length(); i++){
+        result += toquote[i];
+        if(toquote[i] == '\''){
+            result += "'";
+        }
+    }
+    result += "'";
+    return result;
+}
+
+size_t countOccurances(string main, string sub){
+    int count = 0;
+    size_t nPos = main.find(sub);
+    while(nPos != string::npos){
+        count++;
+        nPos = main.find(sub, nPos + 1);
+    }
+    return count;
 }
 
 // todo: ignore stuff inside comments, maybe? probably not
