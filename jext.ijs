@@ -242,7 +242,7 @@ destory = codestroy
 coset 'z'
 
 NB. from http://code.jsoftware.com/wiki/Essays/Huffman_Coding
-NB. frequencies hc letters
+NB. usage: frequencies hc letters
 hc =: dyad define
   if. 1=#x do. y
   else. ((i{x),+/j{x) hc (i{y),<j{y [ i=. (i.#x) -. j=. 2{./:x end.
@@ -257,6 +257,17 @@ hcodes =: dyad define
   t =. 0 {:: x hc w           NB. minimal weight binary tree
   ((< S: 0 t) i. w) { <@(1&=)@; S: 1 {:: t
 )
+jxfind =: 1!:0
+jxread =: 1!:1@enbox
+jxreadln =: jxread@1:
+jxstdin =: jxread@3:
+jxwrite =: 1!:2@enbox
+jxappend =: 1!:3@enbox
+jxmkdir =: 1!:5@enbox
+jxsize =: 1!:4@enbox
 
+date =: 6!:0
+sleep =: 6!:3
+sleepms =: [: sleep %&1000
 coset 'base'
 NB. end jext.ijs
